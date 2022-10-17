@@ -20,14 +20,92 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
-  }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
-  }
+  constructor(direction = true) {
+    this.direction = direction;
+}
+
+  encrypt(string, key) {
+    if (key === undefined || string === undefined ) {
+			throw Error("Incorrect arguments!");
+		}
+
+		let code = [];
+    let result = [];
+    let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		let charCode = key.split('');
+		let str = string.toUpperCase();
+    let iCode = 0;
+
+		for (let i = 0; i < string.length; i++) {
+			if (string[i] === ' ') {
+				code.push(' ');
+				charCode.unshift('!');
+			} else {
+				if (charCode[i] === undefined) {
+					charCode = key.split('');
+					string = string.slice(i);
+					i = 0;
+				}
+				code.push(charCode[i].toUpperCase());
+			}
+		}
+		for(let i = 0; i < str.length; i++) {
+			if (alphabet.indexOf(str[i]) > -1) {
+				if ((alphabet.indexOf(str[i]) + alphabet.indexOf(code[i])) > alphabet.length - 1) {
+					iCode = Math.abs(alphabet.length - (alphabet.indexOf(str[i]) + alphabet.indexOf(code[i])));
+				} else {
+					iCode = alphabet.indexOf(str[i]) + alphabet.indexOf(code[i]);
+				}
+				result.push(alphabet[iCode]);
+			} else {
+				result.push(str[i]);
+			}
+		}
+		if (this.direction === false) {
+			return result.reverse().join('');
+		} else return result.join('');
+	}
+
+  decrypt(string, key) {
+    if (key === undefined || string === undefined ) {
+			throw Error("Incorrect arguments!")
+		}
+		let code = [];
+    let result = [];
+    let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		let charCode = key.split('');
+		let str = string.toUpperCase();
+    let iCode = 0;
+
+		for (let i = 0; i < string.length; i++) {
+			if (string[i] === ' ') {
+				code.push(' ');
+				charCode.unshift('!');
+			} else {
+				if (charCode[i] === undefined) {
+					charCode = key.split('');
+					string = string.slice(i);
+					i = 0;
+				}
+				code.push(charCode[i].toUpperCase());
+			}
+		}
+		for(let i = 0; i < str.length; i++) {
+			if (alphabet.indexOf(str[i]) > -1) {
+				if ((alphabet.indexOf(str[i]) < alphabet.indexOf(code[i]))) {
+					iCode = Math.abs(alphabet.length + (alphabet.indexOf(str[i]) - alphabet.indexOf(code[i])));
+				} else {
+					iCode = alphabet.indexOf(str[i]) - alphabet.indexOf(code[i]);
+				}
+				result.push(alphabet[iCode]);
+			} else {
+				result.push(str[i]);
+			}
+		}
+		if (this.direction === false) {
+			return result.reverse().join('');
+		} else return result.join('');
+	}
 }
 
 module.exports = {
